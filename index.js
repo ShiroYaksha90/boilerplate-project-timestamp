@@ -31,13 +31,28 @@ const date = new Date()
 const miliSeconds = date.getTime()
 const unixTime = Math.floor(miliSeconds / 1000)
 const formattedDateLocal = new Intl.DateTimeFormat(undefined, options).format(date);
-console.log(formattedDateLocal);
+console.log(unixTime);
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
-  res.json({ "unix": unixTime, "utc": formattedDateLocal });
+  res.json({ greeting: 'hello API' });
 });
 
+app.get("/api/:date", (req, res) => {
+  let date = req.params.date
+  console.log(date)
+  if (/\d{5,}/.test(date)) {
+    let dateInt = parseInt(date)
+    res.json({ "unix": date, "utc": new Date().toUTCString() })
+  } else {
+    let dateObj = new Date(date)
+    if (dateObj === 'Invalid Date') {
+      res.json({ Error: "Invalid Date" })
+    } else {
+      res.json({ "unix": dateObj.valueOf(), "utc": dateObj.toUTCString() })
+    }
+  }
+})
 
 
 // Listen on port set in environment variable or default to 3000
